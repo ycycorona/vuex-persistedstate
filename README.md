@@ -73,7 +73,7 @@ can be provided to configure the plugin for your specific needs:
 * `setState <Function>`: A function that will be called to persist the given state. Defaults to using `storage`.
 * `filter <Function>`: A function that will be called to filter any mutations which will trigger `setState` on storage eventually. Defaults to `() => true`
 * `arrayMerger <Function>`: A function for merging arrays when rehydrating state. Defaults to `function (store, saved) { return saved }` (saved state replaces supplied state).
-
+* `expireTime <Number>`: 本地储存的过期时间，每次mutation之后都会更新，会根据这个时间，在每次页面重载时，选择是否删除已有的本地储存
 ## Customize Storage
 
 If it's not ideal to have the state of the Vuex store inside localstorage. One can easily implement the functionality to use [cookies](https://github.com/js-cookie/js-cookie) for that (or any other you can think of);
