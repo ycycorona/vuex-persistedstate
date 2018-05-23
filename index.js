@@ -30,7 +30,21 @@ export default function(options, storage, key) {
     return true;
   }
 
+  function getExpireTime() {
+    return options.expireTime || 24*60*60*1000;
+  }
+
+  /**
+   *
+   * @param time
+   * @returns {boolean}-过期：true,没过期：false
+   */
+  function checkExpireTime(time) {
+    return (new Date()).getTime() - time > 0
+  }
+
   function setState(key, state, storage) {
+    storage.setItem('_vuexPersistedStateExpiredTime', (new Date()).getTime() + getExpireTime());
     return storage.setItem(key, JSON.stringify(state));
   }
 
@@ -38,8 +52,8 @@ export default function(options, storage, key) {
     return paths.length === 0
       ? state
       : paths.reduce(function(substate, path) {
-          return shvl.set(substate, path, shvl.get(state, path));
-        }, {});
+        return shvl.set(substate, path, shvl.get(state, path));
+      }, {});
   }
 
   function subscriber(store) {
@@ -53,8 +67,12 @@ export default function(options, storage, key) {
   }
 
   return function(store) {
-    const savedState = shvl.get(options, 'getState', getState)(key, storage);
+    //超过设定的过期时间，删除本地储存
+    if (storage.getItem('_vuexPersistedStateExpiredTime') && checkExpireTime(storage.getItem('_vuexPersistedStateExpiredTime'))) {
+      storage.removeItem(key);
+    }
 
+    const savedState = shvl.get(options, 'getState', getState)(key, storage);
     if (typeof savedState === 'object' && savedState !== null) {
       store.replaceState(merge(store.state, savedState, {
         arrayMerge: options.arrayMerger || function (store, saved) { return saved },
