@@ -75,6 +75,8 @@ can be provided to configure the plugin for your specific needs:
 * `arrayMerger <Function>`: A function for merging arrays when rehydrating state. Defaults to `function (store, saved) { return saved }` (saved state replaces supplied state).
 * `expireTime <Number>`: 单位毫秒，本地储存的延迟过期时间，每次mutation之后都会刷新这个时间，会根据这个时间，在每次页面重载时，选择是否删除已有的本地储存
     例：1000，表示10秒钟后无操作，下次刷新页面，会删除本地储存的数据
+* `cancelAll <Boolean>`: 默认false, 是否删除所有的本地储存
+* `exceptItems <Array<String>>`: [ ], 是否排除所列出的字段，指的是一级字段，例：`exceptItems: ['startTime', 'endTime']`
 ## Customize Storage
 
 If it's not ideal to have the state of the Vuex store inside localstorage. One can easily implement the functionality to use [cookies](https://github.com/js-cookie/js-cookie) for that (or any other you can think of);
